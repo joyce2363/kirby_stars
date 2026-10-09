@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kirby Stars — macOS Desktop Pet</title>
+  <link rel="icon" type="image/png" href="./kirby.png" />
+  <style>
+    :root {
+      --pink-bright: #ff6fae;
+      --pink-soft: #ffb3d9;
+      --pink-glow: rgba(255, 111, 174, 0.55);
+      --gold: #ffe047;
+      --bg-deep: #141124;
+      --bg-card: rgba(34, 29, 58, 0.82);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "SF Pro Display", "Helvetica Neue", sans-serif;
+      background: radial-gradient(circle at 50% 20%, #2d1f4e 0%, var(--bg-deep) 70%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    .card {
+      position: relative;
+      max-width: 540px;
+      width: 100%;
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255, 179, 217, 0.28);
+      border-radius: 28px;
+      padding: 40px 32px 34px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), 0 0 40px rgba(255, 111, 174, 0.15);
+      z-index: 2;
+    }
+
+    .kirby-wrap {
+      position: relative;
+      width: 145px;
+      height: 145px;
+      margin: 0 auto 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .kirby-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 20px rgba(255, 105, 180, 0.35));
+      animation: floatBounce 2.3s ease-in-out infinite;
+      transition: transform 0.2s ease;
+    }
+
+    .kirby-wrap:hover .kirby-img {
+      transform: scale(1.07);
+    }
+
+    @keyframes floatBounce {
+      0%, 100% { transform: translateY(-7px); }
+      50% { transform: translateY(7px); }
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255, 111, 174, 0.18);
+      border: 1px solid rgba(255, 179, 217, 0.4);
+      color: var(--pink-soft);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #ffb6df 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.80);
+      margin-bottom: 24px;
+    }
+
+    /* Terminal 1-Click Install Box */
+    .terminal-card {
+      text-align: left;
+      background: rgba(14, 12, 26, 0.88);
+      border: 1.5px solid rgba(255, 224, 71, 0.45);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .terminal-tag {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .terminal-sub {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.72);
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+
+    .cmd-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 11px 13px;
+    }
+
+    .cmd-text {
+      flex: 1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #9effc9;
+      white-space: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      user-select: all;
+    }
+
+    .cmd-text::-webkit-scrollbar {
+      display: none;
+    }
+
+    .copy-btn {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #ff85c0 0%, #ff5ca8 50%, #ffdf5d 100%);
+      color: #1a1025;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 18px var(--pink-glow);
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      transform: scale(1.04);
+    }
+
+    .copy-btn:active {
+      transform: scale(0.98);
+    }
+
+    .meta {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+      margin-bottom: 22px;
+    }
+
+    .steps {
+      text-align: left;
+      background: rgba(18, 15, 34, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px 20px;
+    }
+
+    .steps-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--pink-soft);
+      margin-bottom: 12px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.86);
+      margin-bottom: 10px;
+    }
+
+    .step:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background: rgba(255, 111, 174, 0.25);
+      color: var(--pink-soft);
+      font-size: 11.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #ffd6ec;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="badge">🍎 macOS Desktop Pet</div>
+    <div class="kirby-wrap" id="kirbyTrigger" title="Click Kirby!">
+      <img src="./kirby.png" alt="Kirby" class="kirby-img" id="kirbySprite" />
+    </div>
+    <h1>Kirby Stars</h1>
+    <p class="subtitle">
+      A floating Kirby that lives on your Mac screen! Click Kirby anytime to trigger a star suction vortex that inhales all your open windows at once.
+    </p>
+
+    <div class="terminal-card">
+      <div class="terminal-header">
+        <span class="terminal-tag">⭐ 1-Click Terminal Install</span>
+      </div>
+      <div class="terminal-sub">
+        Click <strong>Copy</strong>, paste into your Mac <strong>Terminal</strong> app, and press <strong>Enter</strong> — Kirby will pop onto your screen immediately:
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-text" id="installCmd">curl -sL "https://raw.githubusercontent.com/joyce2363/kirby_stars/main/KirbyPet.zip?v=2" -o /tmp/KirbyPet.zip &amp;&amp; mkdir -p ~/Applications &amp;&amp; pkill -f "KirbyPet.app" 2&gt;/dev/null; rm -rf ~/Applications/KirbyPet.app &amp;&amp; ditto -x -k /tmp/KirbyPet.zip ~/Applications &amp;&amp; xattr -cr ~/Applications/KirbyPet.app &amp;&amp; open -n ~/Applications/KirbyPet.app</div>
+        <button class="copy-btn" id="copyBtn" type="button">📋 Copy</button>
+      </div>
+    </div>
+    <div class="meta">Free • macOS 12.0+ • Apple Silicon &amp; Intel</div>
+
+    <div class="steps">
+      <div class="steps-title">How to Use Kirby</div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>Press <code>⌘ Space</code> on your Mac, type <strong>Terminal</strong>, paste the command above, and press <strong>Enter</strong>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div><strong>Left-click Kirby</strong> anytime to inhale all your open windows!</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div><strong>Drag Kirby</strong> to move him anywhere, or <strong>right-click</strong> him to change his size (Small / Medium / Large).</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const wrap = document.getElementById('kirbyTrigger');
+    const sprite = document.getElementById('kirbySprite');
+    let busy = false;
+    wrap.addEventListener('click', () => {
+      if (busy) return;
+      busy = true;
+      sprite.src = './kirby_inhale.png';
+      sprite.style.transform = 'scale(1.22)';
+      setTimeout(() => {
+        sprite.src = './kirby.png';
+        sprite.style.transform = '';
+        busy = false;
+      }, 750);
+    });
+
+    const copyBtn = document.getElementById('copyBtn');
+    const cmdText = document.getElementById('installCmd').innerText;
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(cmdText);
+        copyBtn.textContent = '✅ Copied!';
+        setTimeout(() => { copyBtn.textContent = '📋 Copy'; }, 2000);
+      } catch (e) {
+        const range = document.createRange();
+        range.selectNodeContents(document.getElementById('installCmd'));
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  </script>
+</body>
+</html>
